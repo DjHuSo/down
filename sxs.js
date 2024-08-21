@@ -18,19 +18,21 @@ function formatNumber(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
   
+  
+const conn = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "bot"
+})
 
-function handleUnexpectedMessage(ctx) {
-    ctx.reply("Noma'lum xabar oldim. Iltimos, ko'rsatmalarni bajaring.")
-        .catch(err => console.error('Xabar yuborishda xatolik:', err));
+conn.connect(function(err){
+    if(err){
+        throw err;
+    }
+    console.log("Connect")
+})
 
-    // Adminni xabardor qilish
-    const alertMessage = `Noma'lum xabar olindi:\nFoydalanuvchi: ${ctx.from.first_name}\nUsername: @${ctx.from.username}\nXabar: ${ctx.message.text}`;
-    ctx.telegram.sendMessage(AdminId, alertMessage)
-        .catch(err => console.error('Admin xabar yuborishda xatolik:', err));
-}
-bot.on('photo',  (ctx) =>{
-    handleUnexpectedMessage(ctx)
-} )
 bot.on('document', async (ctx) => {
     if(AdminId == ctx.from.id){
     const {file_id: fileId} = ctx.update.message.document;
@@ -55,7 +57,8 @@ ctx.reply('Fayl yuklandi endi bazaga yozish uchun /read boyrug`ni bering! ')
 // console.log(fileUrl.href)  
 
 // const url = fileUrl.herf;
-// const fileP = "local_file.xlsx";//a
+// const fileP = "local_file.xlsx";
+
 
 
 // })
@@ -181,24 +184,24 @@ bot.on('message', ctx =>{
     ctx2d.fillText('Narx', 40, 452); // Pozitsiyani kerakli joyga sozlang
     
 /////// 2 - qator
-    ctx2d.fillText(formatNumber(chigit), 280, 62); // Chigit
-    ctx2d.fillText(formatNumber(sheluxa), 280, 82); // Sheluxa
-    ctx2d.fillText(formatNumber(kunjara), 280, 102); // Kunjara
-    ctx2d.fillText(formatNumber(shrot), 280, 122); // Shrot
-    ctx2d.fillText(formatNumber(pressyog), 280, 142); // Press Yog`
-    ctx2d.fillText(formatNumber(ekstrayog), 280, 162); // Ekstra Yog`
-    ctx2d.fillText(formatNumber(resyog), 280, 182); // Rafinatsiyalangan Yog`
-    ctx2d.fillText(formatNumber(tr1), 280, 227); // TR1
-    ctx2d.fillText(formatNumber(ekstra), 280, 247); // Ekstraksiya
-    ctx2d.fillText(formatNumber(press), 280, 267); // Press
-    ctx2d.fillText(formatNumber(tr2), 280, 287); // TR2
-    ctx2d.fillText(formatNumber(raf), 280, 307); // Rafinatsiya
-    ctx2d.fillText(formatNumber(gea), 280, 327); // GEA / LOST
-    ctx2d.fillText(formatNumber(qadoq), 280, 347); // Qadoqlash
-    ctx2d.fillText(formatNumber(kun), 280, 367); // Kunlik o`rtacha narx
-    ctx2d.fillText(formatNumber(jami), 280, 387); // Jami
-   ctx2d.fillText(formatNumber(kub), 280, 432); //  Ishlatilgan
-    ctx2d.fillText(formatNumber(sum), 280, 452); // Narx
+    ctx2d.fillText(chigit, 280, 62); // Chigit
+    ctx2d.fillText(sheluxa, 280, 82); // Sheluxa
+    ctx2d.fillText(kunjara, 280, 102); // Kunjara
+    ctx2d.fillText(shrot, 280, 122); // Shrot
+    ctx2d.fillText(pressyog, 280, 142); // Press Yog`
+    ctx2d.fillText(ekstrayog, 280, 162); // Ekstra Yog`
+    ctx2d.fillText(resyog, 280, 182); // Rafinatsiyalangan Yog`
+    ctx2d.fillText(tr1, 280, 227); // TR1
+    ctx2d.fillText(ekstra, 280, 247); // Ekstraksiya
+    ctx2d.fillText(press, 280, 267); // Press
+    ctx2d.fillText(tr2, 280, 287); // TR2
+    ctx2d.fillText(raf, 280, 307); // Rafinatsiya
+    ctx2d.fillText(gea, 280, 327); // GEA / LOST
+    ctx2d.fillText(qadoq, 280, 347); // Qadoqlash
+    ctx2d.fillText(kun, 280, 367); // Kunlik o`rtacha narx
+    ctx2d.fillText(jami, 280, 387); // Jami
+   ctx2d.fillText(kub, 280, 432); //  Ishlatilgan
+    ctx2d.fillText(sum, 280, 452); // Narx
 
 ////////// 3 - qator
     ctx2d.fillText('kg', 435, 62); // Chigit
@@ -260,6 +263,276 @@ createImage('@Darital_hisobot',ctx)
     }
 
 })
+bot.command('el', ctx =>{
+   
+        let input1 = ctx.message.text.split(" ")
+      
+        conn.query("SELECT * FROM el", function (err, result, fields){
+            if(err){
+                throw err
+            }
+        result.forEach(im =>{
+          ////  console.log(im.sana)
+            if(im.sana === input1[1]){
+             //   console.log(im.sana , im.sum)
+             //   console.log(input1[1])
+                text = `<b>${im.sana} kuni ishlatilgan elektr</b>
+    TR1: ${formatNumber(im.tr1)} so'm
+    Press: ${formatNumber(im.press)} so'm
+    Ekstraksiya: ${formatNumber(im.ekstra)} so'm
+    TR2: ${formatNumber(im.tr2)} so'm
+    Rafinatsiya: ${formatNumber(im.raf)} so'm
+    GEA/Lost: ${formatNumber(im.gea)} so'm
+    Qadoqlash: ${formatNumber(im.qadoq)} so'm
+    Kunlik o'rtacha narx: ${formatNumber(im.kun)} so'm
+    Jami: ${formatNumber(im.sum)} so'm`
+                ctx.reply(text ,  {
+                    parse_mode: "HTML"})
+            } 
+            
+        })
+       
+        })
+       
+      
+})
+
+bot.command('gaz', ctx =>{
+    let input1 = ctx.message.text.split(" ")
+    
+    conn.query("SELECT * FROM gaz", function (err, result, fields){
+        if(err){
+            throw err
+        }
+    result.forEach(im =>{
+      ////  console.log(im.sana)
+        if(im.sana === input1[1]){
+         //   console.log(im.sana , im.sum)
+         //   console.log(input1[1])
+            text = `<b>${im.sana} kuni ishlatilgan gaz</b>
+ Ishlatilgan: ${formatNumber(im.kub)} kub
+ So'mda ${formatNumber(im.sum)} so'm` 
+            ctx.reply(text,  {
+                parse_mode: "HTML"})
+        } 
+        
+    })
+   
+    })
+   
+    
+})
+
+bot.command('tavar', ctx =>{
+    let input1 = ctx.message.text.split(" ")
+   
+    conn.query("SELECT * FROM tavar", function (err, result, fields){
+        if(err){
+            throw err
+        }
+    result.forEach(im =>{
+      ////  console.log(im.sana)
+        if(im.sana === input1[1]){
+         //   console.log(im.sana , im.sum)
+         //   console.log(input1[1])
+            text = `<b>${im.sana} kuni chiqgan mahsulotlar</b>
+    Chigit: ${formatNumber(im.chigit)}
+    Sheluxa: ${formatNumber(im.sheluxa)}
+    Kunjara: ${formatNumber(im.kunjara)}
+    Shrot: ${formatNumber(im.shrot)}
+    Press yog': ${formatNumber(im.presyog)}
+    Ekstra yog': ${formatNumber(im.ekstrayog)}
+    Qayta ishlangan yog': ${formatNumber(im.resyog)}
+    Rafinatsiyalangan yog': ${formatNumber(im.rafyog)}` 
+            ctx.reply(text,  {
+                parse_mode: "HTML"})
+        } 
+        
+    })
+   
+    })
+   
+    
+})
+
+
+bot.command('kun', ctx =>{
+    let input1 = ctx.message.text.split(" ")
+    var cc = `SELECT * FROM el  INNER JOIN gaz ON el.sana = gaz.sana INNER JOIN tavar ON el.sana = tavar.sana;`
+    
+    conn.query(cc , function (err, result, fields){
+        if(err){
+            throw err
+        }
+    result.forEach(im =>{
+      ////  console.log(im.sana)
+        if(im.sana === input1[1]){
+         //   console.log(im.sana , im.sum)
+         //   console.log(input1[1])
+            text = `<b>${im.sana} kuni chiqgan mahsulotlar</b>
+    Chigit: ${formatNumber(im.chigit)}
+    Sheluxa: ${formatNumber(im.sheluxa)}
+    Kunjara: ${formatNumber(im.kunjara)}
+    Shrot: ${formatNumber(im.shrot)}
+    Press yog': ${formatNumber(im.presyog)}
+    Ekstra yog': ${formatNumber(im.ekstrayog)}
+    Qayta ishlangan yog': ${formatNumber(im.resyog)}
+<b>Elektrenergiya hosobi:</b>
+    TR1: ${formatNumber(im.tr1)} so'm
+    Press: ${formatNumber(im.press)} so'm
+    Ekstraksiya: ${formatNumber(im.ekstra)} so'm
+    TR2: ${formatNumber(im.tr2)} so'm
+    Rafinatsiya: ${formatNumber(im.raf)} so'm
+    GEA/Lost: ${formatNumber(im.gea)} so'm
+    Qadoqlash: ${formatNumber(im.qadoq)} so'm
+    Kunlik o'rtacha narx: ${formatNumber(im.kun)} so'm
+    Jami: ${formatNumber(im.sum)} so'm
+<b>Gaz hisobi:</b>    
+    Ishlatilgan: ${formatNumber(im.kub)} kub
+    So'mda ${formatNumber(im.sum)} so'm`
+            ctx.reply(text,  {
+                parse_mode: "HTML"})
+        } 
+        
+    })
+   
+    })
+   
+    
+})
+
+bot.command('add', ctx =>{
+    if(AdminId == ctx.from.id){
+    let input = ctx.message.text.split(" ")
+    const userId = ctx.chat.id
+    if(input.length != 11 && userId === AdminId){
+        ctx.reply("10 so`zdan  ko`p bo`lmasligi kerak Yoki Admin emassiz")
+        return
+    }
+    console.log(input[1])
+    console.log(input[2])
+    var sql = `INSERT INTO el (sana,tr1,press,ekstra,tr2,raf,gea,qadoq,sum,kun) VALUES ('${input[1]}','${input[2]}','${input[3]}','${input[4]}','${input[5]}','${input[6]}','${input[7]}','${input[8]}','${input[9]}','${input[10]}')`
+    conn.query(sql,function(err, result){
+        if(err){
+            throw err
+        }
+        console.log(`${input[1]} Maffaqiyatli yuklandi`)
+        ctx.reply(`${input[1]} Maffaqiyatli yuklandi`)
+    })
+}else {ctx.reply('Siz Admin emasiz?')}  
+})
+
+bot.command('addt', ctx =>{
+    if(AdminId == ctx.from.id){
+    let input = ctx.message.text.split(" ")
+    if(input.length != 10){
+        ctx.reply("10 so`zdan  ko`p bo`lmasligi kerak")
+        return
+    }
+    console.log(input[1])
+    console.log(input[2])
+    var sql = `INSERT INTO tavar (sana,chigit,sheluxa,kunjara,shrot,presyog,ekstrayog,resyog,rafyog) VALUES ('${input[1]}','${input[2]}','${input[3]}','${input[4]}','${input[5]}','${input[6]}','${input[7]}','${input[8]}','${input[9]}')`
+    conn.query(sql,function(err, result){
+        if(err){
+            throw err
+        }
+        console.log(`${input[1]} Tavarlar maffaqiyatli yuklandi`)
+        ctx.reply(`${input[1]} Tavarlar maffaqiyatli yuklandi`)
+    })
+}else {ctx.reply('Siz Admin emasiz?')}  
+})
+
+bot.command('addgaz', ctx =>{
+    if(AdminId == ctx.from.id){
+    let input = ctx.message.text.split(" ")
+    if(input.length != 3){
+        ctx.reply("3 so`zdan  ko`p bo`lmasligi kerak")
+        return
+    }
+    console.log(input[1])
+    console.log(input[2])
+const sum = input[2]*1500
+console.log(Math.floor(sum))
+    
+    var sql = `INSERT INTO gaz (sana,kub,sum) VALUES ('${input[1]}','${input[2]}','${Math.floor(sum)}')`
+    conn.query(sql,function(err, result){
+        if(err){
+            throw err
+        }
+        console.log(`${input[1]}Gaz maffaqiyatli yuklandi`)
+        ctx.reply(`${input[1]} Gaz maffaqiyatli yuklandi`)
+    })
+}else {ctx.reply('Siz Admin emasiz?')}  
+})
+bot.command('del', ctx =>{
+    if(AdminId == ctx.from.id){
+    let input = ctx.message.text.split(" ")
+    if(input.length != 2){
+        ctx.reply("10 so`zdan  ko`p bo`lmasligi kerak")
+        return
+    }
+    console.log(input[1])
+    console.log(input[2])
+    var sql = `DELETE FROM el WHERE sana = '${input[1]}'`
+    conn.query(sql,function(err, result){
+        if(err){
+            throw err
+        }
+        console.log(`${input[1]} Maffaqiyatli o'chirildi`)
+        ctx.reply(`${input[1]} Maffaqiyatli o'chirildi`)
+    })
+}else {ctx.reply('Siz Admin emasiz?')}  
+})
+
+
+bot.command('delgaz', ctx =>{
+    if(AdminId == ctx.from.id){
+    let input = ctx.message.text.split(" ")
+    if(input.length != 2){
+        ctx.reply("10 so`zdan  ko`p bo`lmasligi kerak")
+        return
+    }
+    console.log(input[1])
+    console.log(input[2])
+    var sql = `DELETE FROM gaz WHERE sana = '${input[1]}'`
+    conn.query(sql,function(err, result){
+        if(err){
+            throw err
+        }
+        console.log(`${input[1]} Maffaqiyatli o'chirildi`)
+        ctx.reply(`${input[1]} Maffaqiyatli o'chirildi`)
+    })
+}else {ctx.reply('Siz Admin emasiz?')}  
+})
+
+
+bot.command('delt', ctx =>{
+    if(AdminId == ctx.from.id){
+    let input = ctx.message.text.split(" ")
+    if(input.length != 2){
+        ctx.reply("10 so`zdan  ko`p bo`lmasligi kerak")
+        return
+    }
+    console.log(input[1])
+    console.log(input[2])
+    var sql = `DELETE FROM tavar WHERE sana = '${input[1]}'`
+    conn.query(sql,function(err, result){
+        if(err){
+            throw err
+        }
+        console.log(`${input[1]} Maffaqiyatli o'chirildi`)
+        ctx.reply(`${input[1]} Maffaqiyatli o'chirildi`)
+    })
+}else {ctx.reply('Siz Admin emasiz?')}  
+})
+
+bot.telegram.setMyCommands([
+    { command: "/start", description: "Botni ishga tushurish" },
+    
+  ]);
+  
+
+
 
   
 ////// panel
@@ -280,10 +553,23 @@ ctx.reply(`Ma'lumotlarni to'g'ri yozish bo'yicha qo'llanma!
     }
 
 })
+function handleUnexpectedMessage(ctx) {
+    ctx.reply("Noma'lum xabar oldim. Iltimos, ko'rsatmalarni bajaring.")
+        .catch(err => console.error('Xabar yuborishda xatolik:', err));
+
+    // Adminni xabardor qilish
+    const alertMessage = `Noma'lum xabar olindi:\nFoydalanuvchi: ${ctx.from.first_name}\nUsername: @${ctx.from.username}\nXabar: ${ctx.message.text}`;
+    ctx.telegram.sendMessage(AdminId, alertMessage)
+        .catch(err => console.error('Admin xabar yuborishda xatolik:', err));
+}
+
   bot.start((ctx) =>{
     // ctx.reply('Botimizga xush kelibsiz')
-     ctx.reply(`Botdan foydalanish uchun biror bir sanani yoborsangiz kerkli ma'lumotlarni chiqarib beradi! (masalan 20.08.2024)
-        Sanalar misol uchun yozilgan kerakli sanani o'zingiz kiritasiz bazada yo'q ma'lumotlar yozilsa bot javob qaytarmaydi! `)
+     ctx.reply(`Botdan foydalanish uchun 
+        /tavar 20.07.2024
+        /el 20.07.2024
+        /gaz 20.07.2024
+Sanalar misol uchun yozilgan kerakli sanani o'zingiz kiritasiz bazada yo'q ma'lumotlar yozilsa bot javob qaytarmaydi! `)
      ctx.telegram.sendMessage(AdminId, `Yangi foydalanuvchi botga qo'shildi: ${ctx.from.first_name} (@${ctx.from.username || 'username yo\'q'})`)
     // console.log(ctx)
      .catch(err => console.error('Telegram xatoligi:', err));})
@@ -303,15 +589,18 @@ bot.hears('hi', (ctx) =>{
 //   }, 5000)
   
 bot.on('inline_query', async (ctx) => {
-    const workbook = XLSX.readFile('new.xlsx');
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const data = XLSX.utils.sheet_to_json(sheet);
+    var cc = `SELECT * FROM el  INNER JOIN gaz ON el.sana = gaz.sana INNER JOIN tavar ON el.sana = tavar.sana;`
+    conn.query(cc, function (err, result, fields){
+        if(err){
+            throw err
+        }
+
     const offset = parseInt(ctx.inlineQuery.offset) || 0;
-  //console.log(data)
+  
     let items = [];
   
-    for(var i = 0; i < data.length; i++) {
-      items.push({ title: data[i].Sana, desc: data[i].Sana + ' sanadagi ishlab chiqarilgan mahsulotlar ', id:i, moreinfo: 'More info about item'+i+', mucho importante information'})
+    for(var i = 0; i < result.length; i++) {
+      items.push({ title: result[i].sana, desc: result[i].sana + ' sanadagi ishlab chiqarilgan mahsulotlar ', id:i, moreinfo: 'More info about item'+i+', mucho importante information'})
     }
   
     let results = items.slice(offset, offset+10).map((item) => ({
@@ -321,7 +610,7 @@ bot.on('inline_query', async (ctx) => {
       "thumb_url": "https://avatars.mds.yandex.net/i?id=7fc186c71af22e1078b49b15a7370763_sr-10122654-images-thumbs&n=13",
       description: item.desc,
       input_message_content: {
-        message_text: item.title,
+        message_text: '/kun '+item.title,
         parse_mode: 'Markdown'
       }
     }));
@@ -331,7 +620,7 @@ bot.on('inline_query', async (ctx) => {
     let ourReturn = ctx.answerInlineQuery(results, {is_personal: true, next_offset: offset+results.length, cache_time: 10});
   
     return ourReturn;
-
+})
   });
 
 // bot.on('inline_query', (ctx)=>{
@@ -376,5 +665,52 @@ bot.launch()
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
+
+const sana = '08.08.2024'
+const sql = `SELECT * FROM tavar,el,gaz WHERE gaz.sana = '${sana}'`
+var  ss = `SELECT * FROM((tavar INNER JOIN el ON el.sana = tavar.sana) INNER JOIN gaz ON gaz.sana = tavar.sana) WHERE tavar.sana ='${sana}'`
+var xa = `SELECT * FROM el  INNER JOIN gaz ON el.sana = gaz.sana INNER JOIN tavar ON el.sana = tavar.sana  WHERE el.sana ='${sana}'`   
+var cc = `SELECT * FROM el  INNER JOIN gaz ON el.sana = gaz.sana INNER JOIN tavar ON el.sana = tavar.sana;`
+conn.query(cc, function (err, result, fields){
+    if(err){
+        throw err
+    }
+    
+    
+   //console.log(result)
+    
+    
+    /*
+result.forEach(im =>{
+  ////  console.log(im.sana)
+   
+     //   console.log(im.sana , im.sum)
+     //   console.log(input1[1])
+        text = `<b>${im.sana} kuni chiqgan mahsulotlar</b>
+Chigit: ${formatNumber(im.chigit)}
+Sheluxa: ${formatNumber(im.sheluxa)}
+Kunjara: ${formatNumber(im.kunjara)}
+Shrot: ${formatNumber(im.shrot)}
+Press yog': ${formatNumber(im.presyog)}
+Ekstra yog': ${formatNumber(im.ekstrayog)}
+Qayta ishlangan yog': ${formatNumber(im.resyog)}
+Rafinatsiyalangan yog': ${formatNumber(im.rafyog)}` 
+       console.log(text)
+    
+    
+})*/
+
+})
+// const tt = '20.08.2024'
+// conn.query('SELECT * FROM el WHERE sana = ?', tt, function (error, results, fields) {
+//     if(results[0].sana == tt) {
+//         console.log('bazada bor')
+//       //tt.outputChatBox(`Ваш аккаунт был найден! ${results[0].sana}`);
+//     }
+//     else{
+//         console.log('bazada yoq')
+//      // tt.outputChatBox(`Ваш аккаунт не был найден!`);
+//     }
+//   });
 
 

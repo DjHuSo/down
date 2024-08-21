@@ -4,21 +4,28 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon bot",
-    "st": "nodemon bot"
+    "st": "nodemon img"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "axios": "^1.7.4",
     "canvas": "^2.11.2",
     "express": "^4.19.2",
     "fs": "^0.0.1-security",
+    "heroku": "^9.1.0",
+    "http": "^0.0.1-security",
+    "https": "^1.0.0",
+    "micro-bot": "^2.5.3",
     "mysql": "^2.18.1",
     "node-telegram-bot-api": "^0.66.0",
     "nodemon": "^3.1.4",
+    "path": "^0.12.7",
     "telegraf": "^4.16.3",
     "telegraf-pagination": "^1.4.1",
-    "telegram-keyboard": "^2.3.5"
+    "telegram-keyboard": "^2.3.5",
+    "xlsx": "^0.18.5"
   }
 }
